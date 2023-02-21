@@ -1,16 +1,19 @@
 # FemboyGuessingBot
 A Discord bot that was supposed to have a game where you guess which image is the femboy but that doesnt work yet.
 
-It has 4 commands
+It has 5 commands
 
 # /send_image
 This sends an image that i have
 
-# /send_femboy
-This sends a picture of a femboy from reddit
+# /send_femboy {feed}
+This sends a picture of a femboy from reddit. {feed} is the type of feed you want the image from (new, hot, top or rising)
 
-# /random
-This sends a random number
+# /random {high} {amount}
+This sends {amount} random numbers from 0 to {high} 
 
-# /send_number
+# /send_number {number}
 This sends the number you give it back to you
+
+# /send_reddit {subreddit} {feed}
+Sends an image from a subreddit. {feed} is the type of feed you want the image from (new, hot, top or rising)
