@@ -54,11 +54,30 @@ async def send_image(ctx):
 @app_commands.describe(place="The type of feed you want your image from (new, hot, top or rising)")
 async def send_femboy(ctx, place : str):
     try:
-        imagegetter.function(feed=place)
+        imagegetter.function(feed=place, subreddit="femboy")
         await ctx.response.send_message(file=discord.File('image_name0.jpg'))
     except:
         response="Something went wrong."
         await ctx.response.send_message(response)
-    
+
+
+@bot.tree.command(name="send_reddit", description="Sends an image from a subreddit that you provide")
+@app_commands.describe(place="The type of feed you want your image from (new, hot, top or rising)")
+@app_commands.describe(subreddit="The subreddit you want the image to come from")
+async def send_reddit(ctx, subreddit:str, place:str):
+    try:
+        imagegetter.function(feed=place, subreddit=subreddit)
+        print(subreddit)
+        await ctx.response.send_message(file=discord.File('image_name0.jpg'))
+    except:
+        response="Something went wrong."
+        await ctx.response.send_message(response)
+
 
 bot.run(TOKEN)
+
+
+
+
+
+

@@ -6,9 +6,7 @@ import requests
 import random
 
 non_bmp_map = dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)
-
-sub='femboy'
-
+sub=''
 waba = 0
 imagelist= []
 
@@ -29,20 +27,24 @@ headers = {'User-Agent': 'MyAPI/0.0.1'}
 
 res = requests.post('https://www.reddit.com/api/v1/access_token',
                     auth=auth, data=data, headers=headers)
-hah = res.headers
-
-#print(hah)
-#print(res)
-
 res.json()
 
 token=res.json()['access_token']
 
 headers['Authorization'] = f'bearer {token}'
 
-def function(feed):
+def function(feed, subreddit):
     global waba
+    global sub
+    global imagelist
+
+    sub=subreddit
+    
+    print("imagegetter."+sub)
+    
     link= 'https://oauth.reddit.com/r/'+sub+'/'+feed
+    
+    print("imagegetter."+link)
 
     bruh = requests.get(link, headers=headers)
     
@@ -60,4 +62,7 @@ def function(feed):
         with open('image_name'+str(i)+'.jpg', 'wb') as handler:
             handler.write(img_data)
 
-function(feed="top")
+    sub=''
+    imagelist=[]
+
+#function("top", "femboy")
