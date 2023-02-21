@@ -3,8 +3,10 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import random as randomn
+#try:
 import imagegetter
-
+#except:
+#    null
 TOKEN = "MTA3NzMyNTY3OTExODUyNDUwOA.GV-A9B.0WbVrVdPg4Gg4URxmOhvM10JvqFqQ8ET9Sn8kw"
 
 intents = discord.Intents.all()
@@ -55,7 +57,7 @@ async def send_femboy(ctx, place : str):
         imagegetter.function(feed=place)
         await ctx.response.send_message(file=discord.File('image_name0.jpg'))
     except:
-        response="Something went wrong. The type of feed you inputed was probably incorrect. Check your spelling"
+        response="Something went wrong."
         await ctx.response.send_message(response)
     
 

@@ -29,6 +29,11 @@ headers = {'User-Agent': 'MyAPI/0.0.1'}
 
 res = requests.post('https://www.reddit.com/api/v1/access_token',
                     auth=auth, data=data, headers=headers)
+hah = res.headers
+
+#print(hah)
+#print(res)
+
 res.json()
 
 token=res.json()['access_token']
@@ -40,7 +45,7 @@ def function(feed):
     link= 'https://oauth.reddit.com/r/'+sub+'/'+feed
 
     bruh = requests.get(link, headers=headers)
-
+    
     for post in bruh.json()['data']['children']:
         idk = (str(post['data']['url']).translate(non_bmp_map))
         if 'comments' in idk:
@@ -55,4 +60,4 @@ def function(feed):
         with open('image_name'+str(i)+'.jpg', 'wb') as handler:
             handler.write(img_data)
 
-#function(feed="top")
+function(feed="top")
