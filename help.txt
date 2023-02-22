@@ -1,0 +1,19 @@
+Femboy Guesser Bot
+
+/random {high} {amount}
+Gives {amount} random numbers ranging from 0 to {high}
+
+/send_image
+Sends a random image/video from the couple of folders of gay things i gave it.
+
+/send_femboy {place}
+Sends an image of a femboy from r/femboy. {place} is the feed you want it from (like new, hot, top or rising)
+
+/send_number {number}
+This sends back the number you give it.
+
+/send_reddit {reddit} {place}
+This sends a picture from the subreddit you provide in the {reddit} parameter. {place} is the feed you want it from (like new, hot, top or rising)
+
+/help
+This sends this message.

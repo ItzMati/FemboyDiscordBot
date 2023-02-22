@@ -80,6 +80,14 @@ async def send_reddit(ctx, subreddit:str, place:str):
         await ctx.response.send_message(response)
 
 
+@bot.tree.command(name="help", description="Describes what each command does")
+async def help(ctx):
+    with open("help.txt","r") as f:
+        response=f.read()
+    response = "```"+response+"```"
+    await ctx.response.send_message(response)
+
+
 bot.run(TOKEN)
 
 
