@@ -36,3 +36,6 @@ the number you said was 123
 ```
 ## /send_reddit {subreddit} {feed}
 Sends an image from a subreddit. {feed} is the type of feed you want the image from (new, hot, top or rising)
+
+## /help
+This sends a message that describes each command. Kind of like this read me but shorter and less detailed.
