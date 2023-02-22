@@ -1,6 +1,9 @@
 # FemboyGuessingBot
 A Discord bot that was supposed to have a game where you guess which image is the femboy but that doesnt work yet.
 
+To make the /send_image command work you must add your own images folder. In that folder you should make folders from 1-however many you want. In the folders with numbers as titles you should put in the images. The bot will choose a random folder and then a random image from the folder. If you only have one folder named 1 then it will only chose from there.
+
+
 It has 5 commands
 
 ## /send_image
