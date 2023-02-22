@@ -5,6 +5,7 @@ from discord.ext import commands
 import random as randomn
 import time
 import imagegetter
+from pathlib import Path
 
 TOKEN = "MTA3NzMyNTY3OTExODUyNDUwOA.GV-A9B.0WbVrVdPg4Gg4URxmOhvM10JvqFqQ8ET9Sn8kw"
 
@@ -49,9 +50,10 @@ async def random(ctx, high : int, amount : int):
 async def send_image(ctx):
     await ctx.response.defer()
     d = randomn.randint(1,len(next(os.walk('images'))[1]))
-    response = randomn.choice(os.listdir("images\\"+str(d)))
-    response = "images\\"+str(d)+"\\"+response
+    response = randomn.choice(os.listdir(Path("images/"+str(d))))
+    response = Path("images/"+str(d)+"/"+response)
     await ctx.followup.send(file=discord.File(response))
+
 
 @bot.tree.command(name="send_femboy", description="Sends a random picture of a femboy")
 @app_commands.describe(place="The type of feed you want your image from (new, hot, top or rising)")
