@@ -4,10 +4,8 @@ from discord import app_commands
 from discord.ext import commands
 import random as randomn
 import time
-#try:
 import imagegetter
-#except:
-#    null
+
 TOKEN = "MTA3NzMyNTY3OTExODUyNDUwOA.GV-A9B.0WbVrVdPg4Gg4URxmOhvM10JvqFqQ8ET9Sn8kw"
 
 intents = discord.Intents.all()
@@ -47,9 +45,13 @@ async def random(ctx, high : int, amount : int):
     await ctx.response.send_message(response)
     
 
-@bot.tree.command(name="send_image", description="Sends an image")
+@bot.tree.command(name="send_image", description="Sends a random image/video from the ones i gave it")
 async def send_image(ctx):
-    await ctx.response.send_message(file=discord.File('meme.png'))
+    await ctx.response.defer()
+    d = randomn.randint(1,len(next(os.walk('images'))[1]))
+    response = randomn.choice(os.listdir("images\\"+str(d)))
+    response = "images\\"+str(d)+"\\"+response
+    await ctx.followup.send(file=discord.File(response))
 
 @bot.tree.command(name="send_femboy", description="Sends a random picture of a femboy")
 @app_commands.describe(place="The type of feed you want your image from (new, hot, top or rising)")
