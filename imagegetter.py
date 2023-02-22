@@ -40,12 +40,8 @@ def function(feed, subreddit):
 
     sub=subreddit
     
-    print("imagegetter."+sub)
-    
     link= 'https://oauth.reddit.com/r/'+sub+'/'+feed
     
-    print("imagegetter."+link)
-
     bruh = requests.get(link, headers=headers)
     
     for post in bruh.json()['data']['children']:

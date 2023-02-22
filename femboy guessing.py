@@ -3,6 +3,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import random as randomn
+import time
 #try:
 import imagegetter
 #except:
@@ -55,7 +56,8 @@ async def send_image(ctx):
 async def send_femboy(ctx, place : str):
     try:
         imagegetter.function(feed=place, subreddit="femboy")
-        await ctx.response.send_message(file=discord.File('image_name0.jpg'))
+        await ctx.response.defer()
+        await ctx.followup.send(file=discord.File('image_name0.jpg'))
     except:
         response="Something went wrong."
         await ctx.response.send_message(response)
@@ -67,8 +69,8 @@ async def send_femboy(ctx, place : str):
 async def send_reddit(ctx, subreddit:str, place:str):
     try:
         imagegetter.function(feed=place, subreddit=subreddit)
-        print(subreddit)
-        await ctx.response.send_message(file=discord.File('image_name0.jpg'))
+        await ctx.response.defer()
+        await ctx.followup.send(file=discord.File('image_name0.jpg'))
     except:
         response="Something went wrong."
         await ctx.response.send_message(response)
