@@ -14,22 +14,22 @@ This sends {amount} random numbers from 0 to {high}
 
 #### Example
 ```
->/random 100 3
+/random 100 3
 ```
 ```
->59
->79
->10
+59
+79
+10
 ```
 ## /send_number {number}
 This sends the number you give it back to you
 
 #### Example
 ```
->/send_number 123
+/send_number 123
 ```
 ```
->the number you said was 123
+the number you said was 123
 ```
 ## /send_reddit {subreddit} {feed}
 Sends an image from a subreddit. {feed} is the type of feed you want the image from (new, hot, top or rising)
