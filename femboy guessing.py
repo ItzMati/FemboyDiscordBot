@@ -15,6 +15,12 @@ client = discord.Client(intents=intents)
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+feeds = ['hot', 'top', 'rising']
+
+IsFemboy = False
+
+points=0
+
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
@@ -87,6 +93,106 @@ async def help(ctx):
     response = "```"+response+"```"
     await ctx.response.send_message(response)
 
+
+@bot.tree.command(name="guess_femboy", description="Starts the Femboy Guessing game")
+async def guess_femboy(ctx):
+    global IsFemboy
+    try:
+        h = randomn.randint(1,2)
+        if h == 1:
+            imagegetter.function(feed=feeds[randomn.randint(0,2)], subreddit="femboy")
+            IsFemboy = True
+        else:
+            imagegetter.function(feed=feeds[randomn.randint(0,2)], subreddit="prettygirls")
+            IsFemboy = False
+
+        await ctx.response.defer()
+        await ctx.followup.send(file=discord.File('image_name0.jpg'), view=Buttons())
+
+    except:
+        response="Something went wrong."
+        await ctx.response.send_message(response)
+
+
+
+class Buttons(discord.ui.View):
+    global points
+    def __init__(self):
+        super().__init__(timeout=None) 
+
+    @discord.ui.button(label="Femboy", style=discord.ButtonStyle.blurple)
+    async def femboy(self, interaction: discord.Interaction, Button: discord.ui.Button):
+        global points
+        await interaction.response.defer()
+        if IsFemboy == True:
+            await interaction.followup.send("Correct")
+            points+=1
+        else:
+            await interaction.followup.send("False")
+            points-=1
+
+
+        path = Path('scores/'+str(interaction.user.id)+'.txt')
+
+        if path.is_file() == False:
+            with open(path, "w") as f:
+                f.write("0")
+
+        with open(path, "r") as f:
+            v = int(f.readline())
+
+
+        with open(path, "w") as f:
+            writing = int(v)+int(points)
+            f.write(str(writing))
+
+            points=0
+            writing = 0
+            v=0
+
+        self.stop()
+    
+    @discord.ui.button(label="Woman", style=discord.ButtonStyle.blurple)
+    async def woman(self, interaction: discord.Interaction, Button: discord.ui.Button):
+        global points
+        await interaction.response.defer()
+        if IsFemboy == False:
+            await interaction.followup.send("Correct")
+            points+=1
+        else:
+            await interaction.followup.send("False")
+            points-=1
+
+        path = Path('scores/'+str(interaction.user.id)+'.txt')
+
+        if path.is_file() == False:
+            with open(path, "w") as f:
+                f.write("0")
+        
+        with open(path, "r") as f:
+            v = int(f.readline())
+
+
+        with open(path, "w") as f:
+            writing = int(v)+int(points)
+            f.write(str(writing))
+
+            points=0
+            writing = 0
+            v=0
+
+        self.stop()
+
+@bot.tree.command(name="guessing_points", description="shows the amount of points you have in the Femboy Guessing game")
+async def guessing_points(interaction: discord.Interaction):
+    try:
+        path = Path('scores/'+str(interaction.user.id)+'.txt')
+        with open(path, "r") as f:
+            
+            gh = (f.readlines()[0])
+            await interaction.response.send_message("You have "+gh+" points!")
+    except:
+        await interaction.response.send_message("You havent played the guessing game yet.")
 
 bot.run(TOKEN)
 

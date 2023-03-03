@@ -15,5 +15,11 @@ This sends back the number you give it.
 /send_reddit {reddit} {place}
 This sends a picture from the subreddit you provide in the {reddit} parameter. {place} is the feed you want it from (like new, hot, top or rising)
 
+/guess_femboy
+Plays the femboy guessing game. It's a game were you have to guess if an image has a femboy or a woman in it.
+
+/guessing_points
+Shows the amount of points you have in the femboy guessing game
+
 /help
 This sends this message.
