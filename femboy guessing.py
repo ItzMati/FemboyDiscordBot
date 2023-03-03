@@ -88,10 +88,17 @@ async def send_reddit(ctx, subreddit:str, place:str):
 
 @bot.tree.command(name="help", description="Describes what each command does")
 async def help(ctx):
+
+    embed1 = discord.Embed(title="Femboy Bot", description="These are all the commands and what they do", color=discord.Color.from_rgb(66, 135, 245))
+    
     with open("help.txt","r") as f:
-        response=f.read()
-    response = "```"+response+"```"
-    await ctx.response.send_message(response)
+        flines = f.readlines()
+
+        for i in range(len(flines)):
+            if "/" in flines[i]:
+                embed1.add_field(name=str(flines[i]), value=str(flines[i+1]), inline=False)
+
+    await ctx.response.send_message(embed=embed1)
 
 
 @bot.tree.command(name="guess_femboy", description="Starts the Femboy Guessing game")
