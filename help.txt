@@ -18,8 +18,11 @@ This sends a picture from the subreddit you provide in the {reddit} parameter. {
 /guess_femboy
 Plays the femboy guessing game. It's a game were you have to guess if an image has a femboy or a woman in it.
 
-/guessing_points
-Shows the amount of points you have in the femboy guessing game
+/guessing_points (member)
+Shows the amount of points you have in the femboy guessing game or shows the amount of points someone else has.
+
+/leaderboard
+Shows a leaderboard of the Femboy guessing game
 
 /help
 This sends this message.

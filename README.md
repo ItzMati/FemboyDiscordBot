@@ -5,7 +5,7 @@ To make the /send_image command work you must add your own images folder. In tha
 
 Also create a scores folder though it might make it for you.
 
-It has 8 commands
+It has 9 commands
 
 ## /send_image
 This sends an image that i have
@@ -41,8 +41,11 @@ Sends an image from a subreddit. {feed} is the type of feed you want the image f
 ## /guess_femboy
 starts the femboy guessing game. It's a game where you get sent a picture of either a woman or a femboy and you have to guess which one it is.
 
-## /guessing_points
-Shows the amount of points you have in the femboy guessing game
+## /guessing_points (member)
+Shows the amount of points you have in the femboy guessing game or shows the amount fo points someone else has.
+
+## /leaderboard
+Shows a leaderboard for the Femboy guessing game
 
 ## /help
 This sends a message that describes each command. Kind of like this read me but shorter and less detailed.

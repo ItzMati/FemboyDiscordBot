@@ -89,7 +89,9 @@ async def send_reddit(ctx, subreddit:str, place:str):
 @bot.tree.command(name="help", description="Describes what each command does")
 async def help(ctx):
 
-    embed1 = discord.Embed(title="Femboy Bot", description="These are all the commands and what they do", color=discord.Color.from_rgb(66, 135, 245))
+    embed1 = discord.Embed(title="Femboy Bot",
+                           description="These are all the commands and what they do",
+                           color=discord.Color.from_rgb(66, 135, 245))
     
     with open("help.txt","r") as f:
         flines = f.readlines()
@@ -190,17 +192,78 @@ class Buttons(discord.ui.View):
 
         self.stop()
 
-@bot.tree.command(name="guessing_points", description="shows the amount of points you have in the Femboy Guessing game")
-async def guessing_points(interaction: discord.Interaction):
-    try:
-        path = Path('scores/'+str(interaction.user.id)+'.txt')
-        with open(path, "r") as f:
-            
-            gh = (f.readlines()[0])
-            await interaction.response.send_message("You have "+gh+" points!")
-    except:
-        await interaction.response.send_message("You havent played the guessing game yet.")
+@bot.tree.command(name="guessing_points", description="Shows the amount of points you have in the Femboy Guessing game")
+async def guessing_points(interaction: discord.Interaction, member: discord.Member=None):
+    if member is None:
+        try:
+            path = Path('scores/'+str(interaction.user.id)+'.txt')
+            with open(path, "r") as f:
+                
+                gh = (f.readlines()[0])
+                await interaction.response.send_message("You have "+gh+" points!")
+        except:
+            await interaction.response.send_message("You havent played the guessing game yet.")
 
+    else:
+        try:
+            path = Path('scores/'+str(member.id)+'.txt')
+            with open(path, "r") as f:
+                    
+                gh = (f.readlines()[0])
+                await interaction.response.send_message(str(member)+" has "+gh+" points!")
+        except:
+            await interaction.response.send_message("They havent played the guessing game yet.")
+
+
+@bot.tree.command(name="leaderboard", description="The leaderboard for the Femboy guessing game points.")
+async def leaderboard(inter: discord.Interaction):
+
+    scores = os.listdir(Path('scores/'))
+    fn = []
+    userthing = []
+    pointerz = []
+    response = ""
+
+    new_list = []
+    
+    await inter.response.defer()
+
+    for i in range(len(scores)):
+        with open(Path('scores/'+str(scores[i])), "r") as f:
+            pointerz.append(str(f.read()))
+
+        fn.append(os.path.splitext(scores[i])[0])
+
+    for i in range(len(fn)):
+        userthing.append(inter.client.get_user(int(fn[i])))
+
+    for i in range(len(userthing)):
+        new_list.append([userthing[i], pointerz[i]])
+
+
+    users = new_list
+
+    users.sort(key=lambda a: a[1], reverse=True)
+
+    leaderboard = map(lambda user: str(user[0]) + " | " + str(user[1]) + " points", users)
+
+    leaderboard = list(leaderboard)
+
+
+    embed2 = discord.Embed(title="Femboy Guessing Game Leaderboard",
+                           description="The leaderboard for the points from the Femboy Guessing game",
+                           color=discord.Color.from_rgb(66, 135, 245))
+
+    for i in range(len(leaderboard)):
+        embed2.add_field(name="#"+str(i+1), value=leaderboard[i], inline=False)
+    
+
+    await inter.followup.send(embed=embed2)
+
+
+
+
+  
 bot.run(TOKEN)
 
 
