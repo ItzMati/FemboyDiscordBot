@@ -7,6 +7,7 @@ import time
 import imagegetter
 from pathlib import Path
 
+
 TOKEN = "MTA3NzMyNTY3OTExODUyNDUwOA.GV-A9B.0WbVrVdPg4Gg4URxmOhvM10JvqFqQ8ET9Sn8kw"
 
 intents = discord.Intents.all()
@@ -16,9 +17,7 @@ client = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 feeds = ['hot', 'top', 'rising']
-
 IsFemboy = False
-
 points=0
 
 @bot.event
@@ -29,7 +28,6 @@ async def on_ready():
         print(f"synced {len(synced)} commands")
     except Exception as e:
         print(e)
-
 
 @bot.tree.command(name="send_number", description="Sends back the number you give")
 @app_commands.describe(number="The number that the bot will repeat back to you")
@@ -65,9 +63,9 @@ async def send_image(ctx):
 @app_commands.describe(place="The type of feed you want your image from (new, hot, top or rising)")
 async def send_femboy(ctx, place : str):
     try:
-        imagegetter.function(feed=place, subreddit="femboy")
+        link = imagegetter.function(feed=place, subreddit="femboy")
         await ctx.response.defer()
-        await ctx.followup.send(file=discord.File('image_name0.jpg'))
+        await ctx.followup.send(link)#file=discord.File('image_name0.jpg'))
     except:
         response="Something went wrong."
         await ctx.response.send_message(response)
@@ -78,9 +76,9 @@ async def send_femboy(ctx, place : str):
 @app_commands.describe(subreddit="The subreddit you want the image to come from")
 async def send_reddit(ctx, subreddit:str, place:str):
     try:
-        imagegetter.function(feed=place, subreddit=subreddit)
+        link = imagegetter.function(feed=place, subreddit=subreddit)
         await ctx.response.defer()
-        await ctx.followup.send(file=discord.File('image_name0.jpg'))
+        await ctx.followup.send(link)#file=discord.File('image_name0.jpg'))
     except:
         response="Something went wrong."
         await ctx.response.send_message(response)
@@ -109,14 +107,14 @@ async def guess_femboy(ctx):
     try:
         h = randomn.randint(1,2)
         if h == 1:
-            imagegetter.function(feed=feeds[randomn.randint(0,2)], subreddit="femboy")
+            link = imagegetter.function(feed=feeds[randomn.randint(0,2)], subreddit="femboy")
             IsFemboy = True
         else:
-            imagegetter.function(feed=feeds[randomn.randint(0,2)], subreddit="prettygirls")
+            link = imagegetter.function(feed=feeds[randomn.randint(0,2)], subreddit="prettygirls")
             IsFemboy = False
 
         await ctx.response.defer()
-        await ctx.followup.send(file=discord.File('image_name0.jpg'), view=Buttons())
+        await ctx.followup.send(link, view=Buttons())#file=discord.File('image_name0.jpg'), view=Buttons())
 
     except:
         response="Something went wrong."
@@ -261,6 +259,11 @@ async def leaderboard(inter: discord.Interaction):
     await inter.followup.send(embed=embed2)
 
 
+# make this cool in the future
+#@bot.tree.command(name="image")
+#async def image(ctx, im: discord.Attachment):
+#    await ctx.response.send_message(str(im))
+    
 
 
   
