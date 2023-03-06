@@ -54,12 +54,13 @@ def function(feed, subreddit):
 
     for i in range(1):
         item = random.choice(imagelist)
+        sub=''
+        imagelist=[]
         return item
         #img_data = requests.get(item).content
         #with open('image_name'+str(i)+'.jpg', 'wb') as handler:
         #    handler.write(img_data)
 
-    sub=''
-    imagelist=[]
+    
 
 #function("top", "femboy")
