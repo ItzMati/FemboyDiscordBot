@@ -8,7 +8,7 @@ import imagegetter
 from pathlib import Path
 
 
-TOKEN = "MTA3NzMyNTY3OTExODUyNDUwOA.GV-A9B.0WbVrVdPg4Gg4URxmOhvM10JvqFqQ8ET9Sn8kw"
+TOKEN = open(Path("apikeys/discordkey.txt"), "r").read()
 
 intents = discord.Intents.all()
 

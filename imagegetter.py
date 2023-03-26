@@ -4,6 +4,8 @@ from pprint import pprint
 import sys
 import requests
 import random
+from pathlib import Path
+
 
 non_bmp_map = dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)
 sub=''
@@ -11,8 +13,8 @@ waba = 0
 imagelist= []
 
 
-client_id = 'uHaDpx5N5mQ-IpXQ3W-fkw'
-secret_key = 'x8AyniGBIGSPXKUsIVxnmFRdnWZWlg'
+client_id = open(Path("apikeys/redditclient.txt"), "r").read()
+secret_key = open(Path("apikeys/redditsecret.txt"), "r").read()
 
 auth = requests.auth.HTTPBasicAuth(client_id, secret_key)
     
@@ -57,10 +59,4 @@ def function(feed, subreddit):
         sub=''
         imagelist=[]
         return item
-        #img_data = requests.get(item).content
-        #with open('image_name'+str(i)+'.jpg', 'wb') as handler:
-        #    handler.write(img_data)
 
-    
-
-#function("top", "femboy")
