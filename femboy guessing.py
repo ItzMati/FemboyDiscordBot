@@ -116,7 +116,8 @@ async def guess_femboy(ctx):
         await ctx.response.defer()
         await ctx.followup.send(link, view=Buttons())#file=discord.File('image_name0.jpg'), view=Buttons())
 
-    except:
+    except Exception as e:
+        print(e)
         response="Something went wrong."
         await ctx.response.send_message(response)
 
@@ -228,7 +229,7 @@ async def leaderboard(inter: discord.Interaction):
 
     for i in range(len(scores)):
         with open(Path('scores/'+str(scores[i])), "r") as f:
-            pointerz.append(str(f.read()))
+            pointerz.append(int(f.read()))
 
         fn.append(os.path.splitext(scores[i])[0])
 
