@@ -63,6 +63,7 @@ async def send_image(ctx):
 @app_commands.describe(place="The type of feed you want your image from (new, hot, top or rising)")
 async def send_femboy(ctx, place : str):
     try:
+        import imagegetter
         link = imagegetter.function(feed=place, subreddit="femboy")
         await ctx.response.defer()
         await ctx.followup.send(link)#file=discord.File('image_name0.jpg'))
@@ -76,6 +77,7 @@ async def send_femboy(ctx, place : str):
 @app_commands.describe(subreddit="The subreddit you want the image to come from")
 async def send_reddit(ctx, subreddit:str, place:str):
     try:
+        import imagegetter
         link = imagegetter.function(feed=place, subreddit=subreddit)
         await ctx.response.defer()
         await ctx.followup.send(link)#file=discord.File('image_name0.jpg'))
@@ -105,6 +107,7 @@ async def help(ctx):
 async def guess_femboy(ctx):
     global IsFemboy
     try:
+        import imagegetter
         h = randomn.randint(1,2)
         if h == 1:
             link = imagegetter.function(feed=feeds[randomn.randint(0,2)], subreddit="femboy")
