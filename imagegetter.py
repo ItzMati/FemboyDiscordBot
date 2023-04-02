@@ -20,8 +20,8 @@ auth = requests.auth.HTTPBasicAuth(client_id, secret_key)
     
 data = {
     'grant_type': 'password',
-    'username': 'glubstergluber',
-    'password': 'haslomati1234'
+    'username': open(Path("username.txt")),
+    'password': open(Path("password.txt"))
     }
 
 headers = {'User-Agent': 'MyAPI/0.0.1'}
