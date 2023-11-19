@@ -6,7 +6,8 @@ import random as randomn
 import time
 import imagegetter
 from pathlib import Path
-
+import datetime
+import importlib
 
 TOKEN = open(Path("apikeys/discordkey.txt"), "r").read()
 
@@ -19,6 +20,17 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 feeds = ['hot', 'top', 'rising']
 IsFemboy = False
 points=0
+
+theLastTime = datetime.datetime.now()
+
+def reset_imagegetter():
+    global theLastTime
+    now = datetime.datetime.now()
+    if (now-theLastTime) > datetime.timedelta(hours=1):
+        theLastTime = now
+        importlib.reload(imagegetter)
+        print("It happened frfr", now)
+
 
 @bot.event
 async def on_ready():
@@ -49,26 +61,45 @@ async def random(ctx, high : int, amount : int):
     response = a
     await ctx.response.send_message(response)
     
+listofalreadysentimages = []
+factualstatement = True
+
+count = 0
+for root_dir, cur_dir, files in os.walk(r'images/'):
+    count += len(files)
 
 @bot.tree.command(name="send_image", description="Sends a random image/video from the ones i gave it")
 async def send_image(ctx):
+    global factualstatement
+    global listofalreadysentimages
+    
+    if len(listofalreadysentimages) == count:
+        listofalreadysentimages = []
+    
     await ctx.response.defer()
-    d = randomn.randint(1,len(next(os.walk('images'))[1]))
-    response = randomn.choice(os.listdir(Path("images/"+str(d))))
-    response = Path("images/"+str(d)+"/"+response)
-    await ctx.followup.send(file=discord.File(response))
 
+    while factualstatement == True:
+        global response
+        d = randomn.randint(1,len(next(os.walk('images'))[1]))
+        response = randomn.choice(os.listdir(Path("images/"+str(d))))
+        response = Path("images/"+str(d)+"/"+response)
+        if response not in listofalreadysentimages:
+            factualstatement=False
+    
+    await ctx.followup.send(file=discord.File(response))
+    listofalreadysentimages.append(response)
+    factualstatement=True
 
 @bot.tree.command(name="send_femboy", description="Sends a random picture of a femboy")
 @app_commands.describe(place="The type of feed you want your image from (new, hot, top or rising)")
 async def send_femboy(ctx, place : str):
     try:
-        import imagegetter
+        reset_imagegetter()
         link = imagegetter.function(feed=place, subreddit="femboy")
         await ctx.response.defer()
         await ctx.followup.send(link)#file=discord.File('image_name0.jpg'))
-    except:
-        response="Something went wrong."
+    except Exception as e:
+        response="Something went wrong."+str(e)
         await ctx.response.send_message(response)
 
 
@@ -77,7 +108,7 @@ async def send_femboy(ctx, place : str):
 @app_commands.describe(subreddit="The subreddit you want the image to come from")
 async def send_reddit(ctx, subreddit:str, place:str):
     try:
-        import imagegetter
+        reset_imagegetter()
         link = imagegetter.function(feed=place, subreddit=subreddit)
         await ctx.response.defer()
         await ctx.followup.send(link)#file=discord.File('image_name0.jpg'))
@@ -107,7 +138,7 @@ async def help(ctx):
 async def guess_femboy(ctx):
     global IsFemboy
     try:
-        import imagegetter
+        reset_imagegetter()
         h = randomn.randint(1,2)
         if h == 1:
             link = imagegetter.function(feed=feeds[randomn.randint(0,2)], subreddit="femboy")
