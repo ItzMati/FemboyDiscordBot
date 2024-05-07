@@ -1,11 +1,13 @@
 # Femboy Bot
-A funky discord bot with a couple commands and a game were you guess if the image sent is a femboy of woman.
+A funky discord bot with a couple commands mostly focused around femboys.
 
-To make the /send_image command work you must add your own images folder. In that folder you should make folders from 1-however many you want. In the folders with numbers as titles you should put in the images. The bot will choose a random folder and then a random image from the folder. If you only have one folder named 1 then it will only chose from there.
+To make the /send_image command work you should make and images folder and put folders with numbers from 1 to however many you want as the title of them in there. The bot chooses a random folder, and then sends a random image from in there. I did this to catogerize the images/videos but you can just make a folder called 1 and put everything in there.
 
-Also create a scores folder though it might make it for you.
+The /send_boys folder needs a folder called bimages with a folder called boys and then the boy images in there. why i did it like this i dont know
 
-It has 9 commands
+also create a scores folder though it might make it for you.
+
+It has 12 commands
 
 ## /send_image
 This sends an image that i have
@@ -13,28 +15,6 @@ This sends an image that i have
 ## /send_femboy {feed}
 This sends a picture of a femboy from reddit. {feed} is the type of feed you want the image from (new, hot, top or rising)
 
-## /random {high} {amount}
-This sends {amount} random numbers from 0 to {high} 
-
-#### Example
-```
-/random 100 3
-```
-```
-59
-79
-10
-```
-## /send_number {number}
-This sends the number you give it back to you
-
-#### Example
-```
-/send_number 123
-```
-```
-the number you said was 123
-```
 ## /send_reddit {subreddit} {feed}
 Sends an image from a subreddit. {feed} is the type of feed you want the image from (new, hot, top or rising)
 
@@ -46,6 +26,21 @@ Shows the amount of points you have in the femboy guessing game or shows the amo
 
 ## /leaderboard
 Shows a leaderboard for the Femboy guessing game
+
+## /send_boys
+Sends an image of cute boys, it works like the /send_images command but my friend wanted a command for specifically boys
+
+## /word_leaderboard {word}
+A leaderboard for who uses a specific word the most.
+
+## /top_words
+A leaderboard of the most used words in the channel, its usually I or the
+
+## /send_astolfo
+sends a picture of astolfo from the astolof.rocks api. thank god germans exist for this
+
+## /random_word
+sends a random word sentence and paragraph, usually makes no sense
 
 ## /help
 This sends a message that describes each command. Kind of like this read me but shorter and less detailed.
