@@ -1,16 +1,10 @@
 Femboy Guesser Bot
 
-/random {high} {amount}
-Gives {amount} random numbers ranging from 0 to {high}
-
 /send_image
-Sends a random image or video from the couple of folders of gay things i gave it.
+Sends a random image or video from the couple of folders of gay things.
 
 /send_femboy {place}
 Sends an image of a femboy from r\femboy. {place} is the feed you want it from (like new, hot, top or rising)
-
-/send_number {number}
-This sends back the number you give it.
 
 /send_reddit {reddit} {place}
 This sends a picture from the subreddit you provide in the {reddit} parameter. {place} is the feed you want it from (like new, hot, top or rising)
@@ -23,6 +17,21 @@ Shows the amount of points you have in the femboy guessing game or shows the amo
 
 /leaderboard
 Shows a leaderboard of the Femboy guessing game
+
+/send_boys
+A command that sends cute boys, probably kissing.
+
+/word_leaderboard {word}
+A leaderboard for who uses a specific word the most in a channel.
+
+/top_words
+A leaderboard of the most used words in the channel, its usually I or the
+
+/send_astolfo
+sends a picture of astolfo from the astolof.rocks api. thank god germans exist for this
+
+/random_word
+sends a random word sentence and paragraph, usually makes no sense
 
 /help
 This sends this message.

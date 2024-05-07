@@ -6,8 +6,12 @@ import random as randomn
 import time
 import imagegetter
 from pathlib import Path
-import datetime
+from datetime import timedelta
+from datetime import datetime
 import importlib
+import requests
+import json
+from essential_generators import DocumentGenerator
 
 TOKEN = open(Path("apikeys/discordkey.txt"), "r").read()
 
@@ -21,31 +25,26 @@ feeds = ['hot', 'top', 'rising']
 IsFemboy = False
 points=0
 
-theLastTime = datetime.datetime.now()
+theLastTime = datetime.now()
 
 def reset_imagegetter():
     global theLastTime
-    now = datetime.datetime.now()
-    if (now-theLastTime) > datetime.timedelta(hours=1):
+    now = datetime.now()
+    if (now-theLastTime) > timedelta(hours=1):
         theLastTime = now
         importlib.reload(imagegetter)
         print("It happened frfr", now)
-
+reset_imagegetter()
 
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
+    await bot.change_presence(status=discord.Status.online, activity=discord.Game('Reading your darkest desires'))
     try:
         synced = await bot.tree.sync()
         print(f"synced {len(synced)} commands")
     except Exception as e:
         print(e)
-
-@bot.tree.command(name="send_number", description="Sends back the number you give")
-@app_commands.describe(number="The number that the bot will repeat back to you")
-async def send_number(ctx, number : int):
-    response = "the number you said was "+ str(number)
-    await ctx.response.send_message(response)
 
 a=""
 def gen_numbers(ranger, amoun):
@@ -53,13 +52,6 @@ def gen_numbers(ranger, amoun):
     a=""
     for i in range(amoun):
         a +="\n"+str(randomn.randint(0,int(ranger)))
-
-@bot.tree.command(name = "random", description="Sends a defined amount of random numbers")
-@app_commands.describe(high="The highest number you can generate", amount="The amount of numbers that will be generated")
-async def random(ctx, high : int, amount : int):
-    gen_numbers(high, amount)
-    response = a
-    await ctx.response.send_message(response)
     
 listofalreadysentimages = []
 factualstatement = True
@@ -294,14 +286,146 @@ async def leaderboard(inter: discord.Interaction):
     await inter.followup.send(embed=embed2)
 
 
-# make this cool in the future
-#@bot.tree.command(name="image")
-#async def image(ctx, im: discord.Attachment):
-#    await ctx.response.send_message(str(im))
+factualstatement1 = True
+listofalreadysentimages1 = []
+
+count1 = 0
+for root_dir, cur_dir, files in os.walk(r'bimages/boys/'):
+    count1 += len(files)
+
+@bot.tree.command(name="send_boys", description="Sends a random pic of boys")
+async def send_boys(ctx):
+    global factualstatement1
+    global listofalreadysentimages1
+    
+    if len(listofalreadysentimages1) == count1:
+        listofalreadysentimages1 = []
+    
+    await ctx.response.defer()
+
+    while factualstatement1 == True:
+        global response
+        response = randomn.choice(os.listdir(Path("bimages/boys")))
+        response = Path("bimages/boys/"+response)
+        if response not in listofalreadysentimages1:
+            factualstatement1=False
+    
+    await ctx.followup.send(file=discord.File(response))
+    listofalreadysentimages1.append(response)
+    factualstatement1=True
+
+
+@bot.tree.command(name="word_leaderboard", description="A leaderboard for singular word usage")
+@app_commands.describe(word="The word you want to see the leaderboard of")
+async def word_leaderboard(inter: discord.Interaction, word: str):
+    print("start ", datetime.now())
+
+    members = inter.guild.members
+    word_counts = {}
+    fullmsgl=[]
+    messagelist=[]
+    await inter.response.defer()
+
+    async for message in inter.channel.history(limit=None):
+        fullmsgl.append(message)
+
+
+    for message in fullmsgl:
+        if word.lower() in message.content.lower():
+            messagelist.append(message)
+
+
+
+    print("after first thing", datetime.now())
+    for member in members:
+        word_counts[member.id] = 0
+        for message in messagelist:
+            if message.author == member:
+                word_counts[member.id] += 1
+    print("after second thing", datetime.now())
+
+    word_counts = {member_id: count for member_id, count in word_counts.items() if count != 0}
+    
+    
+    sorted_members = sorted(word_counts.items(), key=lambda x: x[1], reverse=True)
+
+    embed = discord.Embed(title=f'Leaderboard for "{word}"', color=discord.Color.blue())
+    for idx, (member_id, count) in enumerate(sorted_members):
+        member = inter.guild.get_member(member_id)
+        if member:
+            embed.add_field(name=f'{idx + 1}. {member.display_name}', value=f'Count: {count}', inline=False)
+    
+    await inter.followup.send(embed=embed)
+    print("fin", datetime.now())
+
+@bot.tree.command(name="top_words", description="A leaderboard for all word usage")
+async def top_words(inter: discord.Interaction):
+    combined_message = ""
+    await inter.response.defer()
+    
+    async for message in inter.channel.history(limit=None):
+        combined_message += message.content.lower() + " "
+
+    counts = dict()
+    words = combined_message.split()
+
+    for word in words:
+        if word in counts:
+            counts[word] += 1
+        else:
+            counts[word] = 1
+            
+    sortedlist = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:10]  # Slice to include only top 10
+
+    
+    embed = discord.Embed(title='Top 10 Most Used Words', color=discord.Color.blue())
+    for idx, (word, count) in enumerate(sortedlist):
+        embed.add_field(name=f'{idx + 1}. {word}', value=f'Count: {count}', inline=False)
+
+    await inter.followup.send(embed=embed)
+
+
+@bot.tree.command(name="send_astolfo", description="Sends a random image the best bot, astolfo")
+async def send_astolfo(ctx):
+    await ctx.response.defer()
+
+    numba = (requests.get("https://astolfo.rocks/api/images/random")).json()
+    
+    mes = "https://astolfo.rocks/astolfo/"+str(numba["id"])+"."+str(numba["file_extension"])
+
+    await ctx.followup.send(mes)
+
+
+@bot.tree.command(name="random_word", description="Sends a random word,paragrpah or sentence")
+async def random_word(ctx):
+    await ctx.response.defer()
+    gen = DocumentGenerator()
+    a = gen.sentence()
+    b = gen.word()
+    c = gen.paragraph()
+
+    meh = "word = "+str(b)+" \n\nsentence = "+str(a)+" \n\nparagraph = "+str(c)
+
+    await ctx.followup.send(meh)
+
+
+#@bot.tree.command(name="join_voice", description="Join a Voice call")
+#async def join_voice(ctx):
+#    global vc
+#    channel = ctx.user.voice.channel
+#    await ctx.response.send_message("joined")
+#    vc = await channel.connect()
+    
     
 
+#@bot.tree.command(name="leave_voice", description="Join a Voice call")
+#async def leave_voice(ctx: discord.Interaction):
+#    global vc
+#    await ctx.response.send_message("Left")
+#    await vc.disconnect()
 
-  
+    
+
 bot.run(TOKEN)
 
 
