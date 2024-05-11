@@ -22,7 +22,7 @@ Shows a leaderboard of the Femboy guessing game
 A command that sends cute boys, probably kissing.
 
 /word_leaderboard {word}
-A leaderboard for who uses a specific word the most in a channel.
+A leaderboard for who uses a specific word the most.
 
 /top_words
 A leaderboard of the most used words in the channel, its usually I or the
@@ -30,8 +30,17 @@ A leaderboard of the most used words in the channel, its usually I or the
 /send_astolfo
 sends a picture of astolfo from the astolof.rocks api. thank god germans exist for this
 
-/random_word
-sends a random word sentence and paragraph, usually makes no sense
+/join_voice
+Joins the voice channel you are currently in.
+
+/play {link}
+Plays audio from a youtube link
+
+/stop
+Stops playing audio
+
+/leave_voice
+Leaves the voice channel
 
 /help
 This sends this message.

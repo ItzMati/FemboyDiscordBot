@@ -11,7 +11,7 @@ from datetime import datetime
 import importlib
 import requests
 import json
-from essential_generators import DocumentGenerator
+import youtubedown
 
 TOKEN = open(Path("apikeys/discordkey.txt"), "r").read()
 
@@ -89,7 +89,7 @@ async def send_femboy(ctx, place : str):
         reset_imagegetter()
         link = imagegetter.function(feed=place, subreddit="femboy")
         await ctx.response.defer()
-        await ctx.followup.send(link)#file=discord.File('image_name0.jpg'))
+        await ctx.followup.send(link)
     except Exception as e:
         response="Something went wrong."+str(e)
         await ctx.response.send_message(response)
@@ -103,7 +103,7 @@ async def send_reddit(ctx, subreddit:str, place:str):
         reset_imagegetter()
         link = imagegetter.function(feed=place, subreddit=subreddit)
         await ctx.response.defer()
-        await ctx.followup.send(link)#file=discord.File('image_name0.jpg'))
+        await ctx.followup.send(link)
     except:
         response="Something went wrong."
         await ctx.response.send_message(response)
@@ -140,7 +140,7 @@ async def guess_femboy(ctx):
             IsFemboy = False
 
         await ctx.response.defer()
-        await ctx.followup.send(link, view=Buttons())#file=discord.File('image_name0.jpg'), view=Buttons())
+        await ctx.followup.send(link, view=Buttons())
 
     except Exception as e:
         print(e)
@@ -375,7 +375,7 @@ async def top_words(inter: discord.Interaction):
         else:
             counts[word] = 1
             
-    sortedlist = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:10]  # Slice to include only top 10
+    sortedlist = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:10]
 
     
     embed = discord.Embed(title='Top 10 Most Used Words', color=discord.Color.blue())
@@ -385,44 +385,60 @@ async def top_words(inter: discord.Interaction):
     await inter.followup.send(embed=embed)
 
 
-@bot.tree.command(name="send_astolfo", description="Sends a random image the best bot, astolfo")
+@bot.tree.command(name="send_astolfo", description="Sends a random image the best boy, astolfo")
 async def send_astolfo(ctx):
     await ctx.response.defer()
 
-    numba = (requests.get("https://astolfo.rocks/api/images/random")).json()
+    numba = (requests.get("https://astolfo.rocks/api/images/random?rating=safe")).json()
     
     mes = "https://astolfo.rocks/astolfo/"+str(numba["id"])+"."+str(numba["file_extension"])
 
     await ctx.followup.send(mes)
 
 
-@bot.tree.command(name="random_word", description="Sends a random word,paragrpah or sentence")
-async def random_word(ctx):
+
+@bot.tree.command(name="join_voice", description="Joins a Voice call")
+async def join_voice(ctx):
+    global vc
+    channel = ctx.user.voice.channel
+    await ctx.response.send_message("Joined")
+    vc = await channel.connect()
+
+
+
+def deletingtheaudio():
+    for filename in os.listdir("music"):
+        os.remove("music/"+filename)
+        
+    
+
+@bot.tree.command(name="play", description="Play audio from a youtube link")
+@app_commands.describe(link="The Youtube link of what you want to play")
+async def play(ctx, link: str):
     await ctx.response.defer()
-    gen = DocumentGenerator()
-    a = gen.sentence()
-    b = gen.word()
-    c = gen.paragraph()
-
-    meh = "word = "+str(b)+" \n\nsentence = "+str(a)+" \n\nparagraph = "+str(c)
-
-    await ctx.followup.send(meh)
-
-
-#@bot.tree.command(name="join_voice", description="Join a Voice call")
-#async def join_voice(ctx):
-#    global vc
-#    channel = ctx.user.voice.channel
-#    await ctx.response.send_message("joined")
-#    vc = await channel.connect()
     
+    deletingtheaudio()
     
+    vidtitle, linkthing = youtubedown.download(link)
 
-#@bot.tree.command(name="leave_voice", description="Join a Voice call")
-#async def leave_voice(ctx: discord.Interaction):
-#    global vc
-#    await ctx.response.send_message("Left")
-#    await vc.disconnect()
+    audiosources = discord.FFmpegPCMAudio(executable="C:/FFmpeg/bin/ffmpeg.exe", source=linkthing)
+
+    vc.play(discord.PCMVolumeTransformer(audiosources, volume=0.5))
+    
+    await ctx.followup.send("Playing "+ vidtitle)
+
+@bot.tree.command(name="stop", description="Stops playing audio")
+async def stop(ctx: discord.Interaction):
+    global vc
+    await ctx.response.send_message("Stopped")
+    vc.stop()
+
+
+@bot.tree.command(name="leave_voice", description="Leaves a Voice call")
+async def leave_voice(ctx: discord.Interaction):
+    global vc
+    await ctx.response.send_message("Left")
+    await vc.disconnect()
 
     
 
