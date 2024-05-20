@@ -24,7 +24,6 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 feeds = ['hot', 'top', 'rising']
 IsFemboy = False
 points=0
-
 theLastTime = datetime.now()
 
 def reset_imagegetter():
@@ -36,42 +35,48 @@ def reset_imagegetter():
         print("It happened frfr", now)
 reset_imagegetter()
 
+a=""    
+listofalreadysentimages = []
+factualstatement = True
+listofalreadysentimages1 = []
+factualstatement1 = True
+count = 0
+count1 = 0
+
+def gen_numbers(ranger, amoun):
+    global a
+    a=""
+    for i in range(amoun):
+        a +="\n"+str(randomn.randint(0,int(ranger)))
+
+for root_dir, cur_dir, files in os.walk(r'images/'):
+    count += len(files)
+
+for root_dir, cur_dir, files in os.walk(r'bimages/boys/'):
+    count1 += len(files)
+
+
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
-    await bot.change_presence(status=discord.Status.online, activity=discord.Game('Reading your darkest desires'))
+    await bot.change_presence(status=discord.Status.online, activity=discord.Game('Femboys'))
     try:
         synced = await bot.tree.sync()
         print(f"synced {len(synced)} commands")
     except Exception as e:
         print(e)
 
-a=""
-def gen_numbers(ranger, amoun):
-    global a
-    a=""
-    for i in range(amoun):
-        a +="\n"+str(randomn.randint(0,int(ranger)))
-    
-listofalreadysentimages = []
-factualstatement = True
-
-count = 0
-for root_dir, cur_dir, files in os.walk(r'images/'):
-    count += len(files)
-
 @bot.tree.command(name="send_image", description="Sends a random image/video from the ones i gave it")
 async def send_image(ctx):
     global factualstatement
     global listofalreadysentimages
     
+    await ctx.response.defer()
+    
     if len(listofalreadysentimages) == count:
         listofalreadysentimages = []
     
-    await ctx.response.defer()
-
     while factualstatement == True:
-        global response
         d = randomn.randint(1,len(next(os.walk('images'))[1]))
         response = randomn.choice(os.listdir(Path("images/"+str(d))))
         response = Path("images/"+str(d)+"/"+response)
@@ -85,14 +90,14 @@ async def send_image(ctx):
 @bot.tree.command(name="send_femboy", description="Sends a random picture of a femboy")
 @app_commands.describe(place="The type of feed you want your image from (new, hot, top or rising)")
 async def send_femboy(ctx, place : str):
+    await ctx.response.defer()
     try:
         reset_imagegetter()
         link = imagegetter.function(feed=place, subreddit="femboy")
-        await ctx.response.defer()
         await ctx.followup.send(link)
     except Exception as e:
         response="Something went wrong."+str(e)
-        await ctx.response.send_message(response)
+        await ctx.followup.send(response)
 
 
 @bot.tree.command(name="send_reddit", description="Sends an image from a subreddit that you provide")
@@ -111,7 +116,6 @@ async def send_reddit(ctx, subreddit:str, place:str):
 
 @bot.tree.command(name="help", description="Describes what each command does")
 async def help(ctx):
-
     embed1 = discord.Embed(title="Femboy Bot",
                            description="These are all the commands and what they do",
                            color=discord.Color.from_rgb(66, 135, 245))
@@ -129,6 +133,7 @@ async def help(ctx):
 @bot.tree.command(name="guess_femboy", description="Starts the Femboy Guessing game")
 async def guess_femboy(ctx):
     global IsFemboy
+    await ctx.response.defer()
     try:
         reset_imagegetter()
         h = randomn.randint(1,2)
@@ -139,13 +144,12 @@ async def guess_femboy(ctx):
             link = imagegetter.function(feed=feeds[randomn.randint(0,2)], subreddit="prettygirls")
             IsFemboy = False
 
-        await ctx.response.defer()
         await ctx.followup.send(link, view=Buttons())
 
     except Exception as e:
         print(e)
         response="Something went wrong."
-        await ctx.response.send_message(response)
+        await ctx.followup.send(response)
 
 
 
@@ -164,7 +168,6 @@ class Buttons(discord.ui.View):
         else:
             await interaction.followup.send("False")
             points-=1
-
 
         path = Path('scores/'+str(interaction.user.id)+'.txt')
 
@@ -206,7 +209,6 @@ class Buttons(discord.ui.View):
         with open(path, "r") as f:
             v = int(f.readline())
 
-
         with open(path, "w") as f:
             writing = int(v)+int(points)
             f.write(str(writing))
@@ -242,21 +244,19 @@ async def guessing_points(interaction: discord.Interaction, member: discord.Memb
 
 @bot.tree.command(name="leaderboard", description="The leaderboard for the Femboy guessing game points.")
 async def leaderboard(inter: discord.Interaction):
-
     scores = os.listdir(Path('scores/'))
     fn = []
     userthing = []
     pointerz = []
     response = ""
-
     new_list = []
-    
+
     await inter.response.defer()
 
     for i in range(len(scores)):
         with open(Path('scores/'+str(scores[i])), "r") as f:
             pointerz.append(int(f.read()))
-
+            
         fn.append(os.path.splitext(scores[i])[0])
 
     for i in range(len(fn)):
@@ -265,15 +265,10 @@ async def leaderboard(inter: discord.Interaction):
     for i in range(len(userthing)):
         new_list.append([userthing[i], pointerz[i]])
 
-
     users = new_list
-
     users.sort(key=lambda a: a[1], reverse=True)
-
     leaderboard = map(lambda user: str(user[0]) + " | " + str(user[1]) + " points", users)
-
     leaderboard = list(leaderboard)
-
 
     embed2 = discord.Embed(title="Femboy Guessing Game Leaderboard",
                            description="The leaderboard for the points from the Femboy Guessing game",
@@ -282,29 +277,19 @@ async def leaderboard(inter: discord.Interaction):
     for i in range(len(leaderboard)):
         embed2.add_field(name="#"+str(i+1), value=leaderboard[i], inline=False)
     
-
     await inter.followup.send(embed=embed2)
-
-
-factualstatement1 = True
-listofalreadysentimages1 = []
-
-count1 = 0
-for root_dir, cur_dir, files in os.walk(r'bimages/boys/'):
-    count1 += len(files)
 
 @bot.tree.command(name="send_boys", description="Sends a random pic of boys")
 async def send_boys(ctx):
     global factualstatement1
     global listofalreadysentimages1
     
+    await ctx.response.defer()
+    
     if len(listofalreadysentimages1) == count1:
         listofalreadysentimages1 = []
-    
-    await ctx.response.defer()
 
     while factualstatement1 == True:
-        global response
         response = randomn.choice(os.listdir(Path("bimages/boys")))
         response = Path("bimages/boys/"+response)
         if response not in listofalreadysentimages1:
@@ -333,8 +318,6 @@ async def word_leaderboard(inter: discord.Interaction, word: str):
     for message in fullmsgl:
         if word.lower() in message.content.lower():
             messagelist.append(message)
-
-
 
     print("after first thing", datetime.now())
     for member in members:
@@ -377,7 +360,6 @@ async def top_words(inter: discord.Interaction):
             
     sortedlist = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:10]
 
-    
     embed = discord.Embed(title='Top 10 Most Used Words', color=discord.Color.blue())
     for idx, (word, count) in enumerate(sortedlist):
         embed.add_field(name=f'{idx + 1}. {word}', value=f'Count: {count}', inline=False)
@@ -396,29 +378,28 @@ async def send_astolfo(ctx):
     await ctx.followup.send(mes)
 
 
-
 @bot.tree.command(name="join_voice", description="Joins a Voice call")
-async def join_voice(ctx):
+async def join_voice(ctx: discord.Interaction):
     global vc
+    await ctx.response.defer()
     channel = ctx.user.voice.channel
-    await ctx.response.send_message("Joined")
+    print(channel)
     vc = await channel.connect()
-
-
-
+    await ctx.followup.send("Joined")
+    
 def deletingtheaudio():
     for filename in os.listdir("music"):
         os.remove("music/"+filename)
         
     
-
 @bot.tree.command(name="play", description="Play audio from a youtube link")
 @app_commands.describe(link="The Youtube link of what you want to play")
 async def play(ctx, link: str):
     await ctx.response.defer()
-    
-    deletingtheaudio()
-    
+    try:
+        deletingtheaudio()
+    except:
+        print("hi")
     vidtitle, linkthing = youtubedown.download(link)
 
     audiosources = discord.FFmpegPCMAudio(executable="C:/FFmpeg/bin/ffmpeg.exe", source=linkthing)
@@ -440,7 +421,6 @@ async def leave_voice(ctx: discord.Interaction):
     await ctx.response.send_message("Left")
     await vc.disconnect()
 
-    
 
 bot.run(TOKEN)
 
