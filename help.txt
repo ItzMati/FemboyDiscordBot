@@ -24,6 +24,12 @@ A command that sends cute boys, probably kissing.
 /word_leaderboard {word}
 A leaderboard for who uses a specific word the most.
 
+/phrase_leaderboard {phrase}
+A leaderboard for who uses a specific phrase the most.
+
+/word_count_leaderboard
+A leaderboard for who has the most sent words.
+
 /top_words
 A leaderboard of the most used words in the channel, its usually I or the
 

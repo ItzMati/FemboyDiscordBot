@@ -33,14 +33,32 @@ Sends an image of cute boys, it works like the /send_images command but my frien
 ## /word_leaderboard {word}
 A leaderboard for who uses a specific word the most.
 
+## /word_leaderboard {word}
+A leaderboard for who uses a specific word the most.
+
+## /phrase_leaderboard {phrase}
+A leaderboard for who uses a specific phrase the most.
+
+## /word_count_leaderboard
+A leaderboard for who has the most sent words.
+
 ## /top_words
 A leaderboard of the most used words in the channel, its usually I or the
 
 ## /send_astolfo
 sends a picture of astolfo from the astolof.rocks api. thank god germans exist for this
 
-## /random_word
-sends a random word sentence and paragraph, usually makes no sense
+## /join_voice
+Joins the voice channel you are currently in.
+
+## /play {link}
+Plays audio from a youtube link
+
+## /stop
+Stops playing audio
+
+## /leave_voice
+Leaves the voice channel
 
 ## /help
 This sends a message that describes each command. Kind of like this read me but shorter and less detailed.
