@@ -15,6 +15,8 @@ import requests
 import json
 import youtubedown
 import csv
+from PIL import Image, ImageSequence
+from io import BytesIO
 
 #discord stuff
 TOKEN = open(Path("apikeys/discordkey.txt"), "r").read()
@@ -120,6 +122,17 @@ async def on_ready():
         print(f"synced {len(synced)} commands")
     except Exception as e:
         print(e)
+
+#on message gif deleting
+'''@bot.event
+async def on_message(message):
+    if message.attachments:
+        for i in range(len(message.attachments)):
+            if message.attachments[i].content_type == "image/gif":
+                await message.delete()
+    if "discordapp" in message.content or "tenor.com" in message.content and "gif" in message.content:
+        await message.delete()'''
+
 
 #global check
 @app_commands.check
@@ -383,19 +396,13 @@ async def send_boys(ctx):
     factualstatement1=True
 
 
-@bot.tree.command(name="word_leaderboard", description="A leaderboard for singular word usage")
-@app_commands.describe(word="The word you want to see the leaderboard of")
-@check_blacklist
-async def word_leaderboard(inter: discord.Interaction, word: str):
-    await inter.response.defer()
-    await download_messages(inter)
-
+def word_leaderboard(word,guildid):
     allmsg = {}
     authorlst =[]
     word_counts = {}
     num=0
     
-    with open((Path("messages/"+ str(inter.guild.id) +".csv")), newline="", encoding="utf-8") as f:
+    with open((Path("messages/"+ str(guildid) +".csv")), newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             if row["author"] not in word_counts:
@@ -415,21 +422,16 @@ async def word_leaderboard(inter: discord.Interaction, word: str):
         if member:
             embed.add_field(name=f'{idx + 1}. {member}', value=f'Count: {count}', inline=False)
     
-    await inter.followup.send(embed=embed)
+    return(embed)
 
-@bot.tree.command(name="phrase_leaderboard", description="A leaderboard for singular word usage")
-@app_commands.describe(phrase="The phrase you want to see the leaderboard of")
-@check_blacklist
-async def phrase_leaderboard(inter: discord.Interaction, phrase: str):
-    await inter.response.defer()
-    await download_messages(inter)
 
+def phrase_leaderboard(phrase,guildid):
     allmsg = {}
     authorlst =[]
     word_counts = {}
     num=0
     
-    with open((Path("messages/"+ str(inter.guild.id) +".csv")), newline="", encoding="utf-8") as f:
+    with open((Path("messages/"+ str(guildid) +".csv")), newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             if row["author"] not in word_counts:
@@ -448,20 +450,17 @@ async def phrase_leaderboard(inter: discord.Interaction, phrase: str):
         if member:
             embed.add_field(name=f'{idx + 1}. {member}', value=f'Count: {count}', inline=False)
     
-    await inter.followup.send(embed=embed)
+    return(embed)
 
-@bot.tree.command(name="word_count_leaderboard", description="A leaderboard for singular word usage")
-@check_blacklist
-async def word_count_leaderboard(inter: discord.Interaction):
-    await inter.response.defer()
-    await download_messages(inter)
 
+def word_count_leaderboard(guildid):
     allmsg = {}
     authorlst =[]
     word_counts = {}
     num=0
+    totalwords = 0
     
-    with open((Path("messages/"+ str(inter.guild.id) +".csv")), newline="", encoding="utf-8") as f:
+    with open((Path("messages/"+ str(guildid) +".csv")), newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             if row["author"] not in word_counts:
@@ -469,27 +468,25 @@ async def word_count_leaderboard(inter: discord.Interaction):
             
             for words in row["content"].split(" "):
                 word_counts[row["author"]] += 1
+                totalwords +=1
 
     word_counts = {name: count for name, count in word_counts.items() if count != 0}
     
     sorted_members = sorted(word_counts.items(), key=lambda x: x[1], reverse=True)
 
-    embed = discord.Embed(title=f'Leaderboard for most words said:', color=discord.Color.blue())
+    embed = discord.Embed(title=f'Leaderboard for most words said: \n Total: '+str(totalwords), color=discord.Color.blue())
     for idx, (name, count) in enumerate(sorted_members):
         member = name
         if member:
-            embed.add_field(name=f'{idx + 1}. {member}', value=f'Count: {count}', inline=False)
+            embed.add_field(name=f'{idx + 1}. {member}', value=f'Count: {count} ({(count/totalwords)*100:.1f}%)', inline=False)
     
-    await inter.followup.send(embed=embed)
+    return(embed)
 
-@bot.tree.command(name="top_words", description="A leaderboard for all word usage")
-@check_blacklist
-async def top_words(inter: discord.Interaction):
+
+def top_words(guildid):
     combined_message = ""
-    await download_messages(inter)
-    await inter.response.defer()
 
-    with open((Path("messages/"+ str(inter.guild.id) +".csv")), newline="", encoding="utf-8") as f:
+    with open((Path("messages/"+ str(guildid) +".csv")), newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             combined_message += row["content"].lower() + " "
@@ -504,12 +501,44 @@ async def top_words(inter: discord.Interaction):
             counts[word] = 1
             
     sortedlist = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:10]
-
+    
     embed = discord.Embed(title='Top 10 Most Used Words', color=discord.Color.blue())
     for idx, (word, count) in enumerate(sortedlist):
         embed.add_field(name=f'{idx + 1}. {word}', value=f'Count: {count}', inline=False)
 
-    await inter.followup.send(embed=embed)
+    return(embed)
+
+@bot.tree.command(name="word", description="The one command for all the word and phrase leaderboards")
+@app_commands.describe(ctype="The type of leaderboard you want")
+@app_commands.choices(ctype=[
+        app_commands.Choice(name="Top Words", value="top_words"),
+        app_commands.Choice(name="Word Count Leaderboard", value="word_count_leaderboard"),
+        app_commands.Choice(name="Phrase Leaderboard", value="phrase_leaderboard"),
+        app_commands.Choice(name="Word_Leaderboard", value="word_leaderboard")
+])
+@app_commands.describe(words="The word or phrase you want to use for the phrase and word leaderboard command")
+@check_blacklist
+async def word(inter: discord.Interaction, ctype: str, words: str = None):
+    await inter.response.defer()
+    await download_messages(inter)
+    if ctype in ["word_leaderboard", "phrase_leaderboard"]:
+        if words == None:
+            await inter.followup.send("You need to input a word/phrase")
+            return
+
+    if ctype == "top_words":
+        await inter.followup.send(embed=top_words(inter.guild.id))
+    elif ctype == "word_count_leaderboard":
+        await inter.followup.send(embed=word_count_leaderboard(inter.guild.id))
+    elif ctype == "phrase_leaderboard":
+        try:
+            await inter.followup.send(embed=phrase_leaderboard(words,inter.guild.id))
+        except Exception as e:
+            await inter.followup.send(e)
+    elif ctype == "word_leaderboard":
+        await inter.followup.send(embed=word_leaderboard(words,inter.guild.id))
+    else:
+        await inter.followup.send("Something went wrong")
 
 
 @bot.tree.command(name="send_astolfo", description="Sends a random image the best boy, astolfo")
@@ -576,6 +605,35 @@ async def leave_voice(ctx: discord.Interaction):
     await ctx.response.send_message("Left")
     await vc[ctx.guild.id].disconnect()
 
+@bot.tree.command(name="stone", description="When another user has said something fucked up, use this to publicly stone them")
+@app_commands.describe(user="The member you want to stone")
+@check_blacklist
+async def stone(ctx: discord.Interaction, user: discord.Member):
+    await ctx.response.defer()
+
+    avatar_url = user.display_avatar.url
+    response = requests.get(avatar_url)
+    avatar = Image.open(BytesIO(response.content)).convert("RGBA")
+    
+    overlay_gif = Image.open('stone2.gif')
+    frames = []
+
+    for frame in ImageSequence.Iterator(overlay_gif):
+        frame = frame.convert("RGBA")
+
+        frame = frame.resize(avatar.size, Image.Resampling.LANCZOS)
+
+        combined = Image.alpha_composite(avatar, frame)
+
+        combined = combined.convert("RGBA")
+        frames.append(combined)
+
+
+    output_buffer = BytesIO()
+    frames[0].save(output_buffer, format='GIF', save_all=True, append_images=frames[1:], loop=0, duration=overlay_gif.info['duration'])
+    output_buffer.seek(0)
+
+    await ctx.followup.send(file=discord.File(fp=output_buffer, filename='overlayed.gif'))
 
 bot.run(TOKEN)
 
